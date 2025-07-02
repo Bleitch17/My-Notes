@@ -1,0 +1,6 @@
+# Local npm packages
+node_modules/
+
+# Build output:
+bundle.js
+bundle.js.map
