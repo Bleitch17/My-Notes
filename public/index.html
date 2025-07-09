@@ -6,9 +6,12 @@
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  <div id="canvas-container">
-    <div id="note-layer"></div>
-    <canvas id="draw-layer" width="1000" height="800"></canvas>
+  <div id="notepad-container">
+    <!-- Note blocks are added as children to this container, and are shown on top of the drawing canvas. -->
+    <div id="notes-container"></div>
+
+    <!-- The drawing canvas. -->
+    <canvas id="draw-canvas" width="1000" height="800"></canvas>
   </div>
 
   <script src="bundle.js"></script>
