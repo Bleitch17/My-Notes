@@ -1,4 +1,4 @@
 (() => {
   // src/main.js
-  console.log("Hello World!");
+  console.log("Hello BrowserSync!");
 })();
