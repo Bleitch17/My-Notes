@@ -4,7 +4,8 @@ export class NoteBlock {
     constructor(container) {
         this.container = container;
         this.element = null;
-        this.content = '# My Note\n\nStart typing in **markdown**!';
+        this.content = '# My Note\n\nStart typing in **markdown**!\n\nPress **Esc** to preview.';
+        this.isEditMode = true;
         this.render();
         this.attachEventListeners();
     }
@@ -22,29 +23,56 @@ export class NoteBlock {
         const div = document.createElement('div');
         div.className = 'note-block';
         
-        const textarea = document.createElement('textarea');
-        textarea.className = 'note-input';
-        textarea.value = this.content;
-        textarea.placeholder = 'Write your note in markdown...';
+        if (this.isEditMode) {
+            const textarea = document.createElement('textarea');
+            textarea.className = 'note-block-textarea';
+            textarea.value = this.content;
+            div.appendChild(textarea);
 
-        const preview = document.createElement('div');
-        preview.className = 'note-preview';
-        preview.innerHTML = marked.parse(this.content);
-
-        div.appendChild(textarea);
-        div.appendChild(preview);
-
+            // TODO - Why did Claude wrap this in a timeout?
+            textarea.focus();
+            textarea.setSelectionRange(this.content.length, this.content.length);
+        } else {
+            const preview = document.createElement('div');
+            preview.className = 'note-block-preview';
+            preview.innerHTML = marked.parse(this.content);
+            div.appendChild(preview);
+        }
         return div;
     }
 
     attachEventListeners() {
-        const textarea = this.element.querySelector('.note-input');
-        const preview = this.element.querySelector('.note-preview');
+        if (this.isEditMode) {
+            const textarea = this.element.querySelector('.note-block-textarea');
 
-        textarea.addEventListener('input', (inputEvent) => {
-            console.log(inputEvent.target.value);
-            this.content = inputEvent.target.value;
-            preview.innerHTML = marked.parse(this.content);
-        });
+            textarea.addEventListener('input', (e) => {
+                this.content = e.target.value;
+                this.adjustTextareaHeight(textarea);
+            });
+
+            this.adjustTextareaHeight(textarea);
+
+            textarea.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    this.isEditMode = false;
+                    this.render();
+                    this.attachEventListeners();
+                }
+            });
+        } else {
+            const preview = this.element.querySelector('.note-block-preview');
+
+            preview.addEventListener('dblclick', () => {
+                this.isEditMode = true;
+                this.render();
+                this.attachEventListeners();
+            });
+        }
+    }
+
+    adjustTextareaHeight(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
     }
 }
