@@ -6,6 +6,7 @@ export class NoteBlock {
         this.element = null;
         this.content = '# My Note\n\nStart typing in **markdown**!\n\nPress **Esc** to preview.';
         this.isEditMode = true;
+        
         this.render();
         this.attachEventListeners();
     }
@@ -20,48 +21,55 @@ export class NoteBlock {
     }
 
     createElement() {
-        const div = document.createElement('div');
-        div.className = 'note-block';
-        
-        if (this.isEditMode) {
-            const textarea = document.createElement('textarea');
-            textarea.className = 'note-block-textarea';
-            textarea.value = this.content;
-            div.appendChild(textarea);
+        const noteBlock = document.createElement('div');
+        noteBlock.className = 'note-block';
 
-            // TODO - Why did Claude wrap this in a timeout?
-            textarea.focus();
-            textarea.setSelectionRange(this.content.length, this.content.length);
+        if (this.isEditMode) {
+            const editor = document.createElement('textarea');
+            editor.className = 'note-block__editor';
+            editor.value = this.content;
+            editor.placeholder = 'Write your note in Markdown...';
+
+            noteBlock.appendChild(editor);
+
+            // Claude: Delay execution until after the current call stack completes, allowing the browser to fully render
+            // before the cursor is manipulated. 
+            setTimeout(() => {
+                editor.focus();
+                editor.setSelectionRange(this.content.length, this.content.length);
+            }, 0);
         } else {
             const preview = document.createElement('div');
-            preview.className = 'note-block-preview';
+            preview.className = 'note-block__preview';
             preview.innerHTML = marked.parse(this.content);
-            div.appendChild(preview);
+            noteBlock.appendChild(preview);
         }
-        return div;
+
+        return noteBlock;
     }
 
     attachEventListeners() {
         if (this.isEditMode) {
-            const textarea = this.element.querySelector('.note-block-textarea');
+            const editor = this.element.querySelector('.note-block__editor');
 
-            textarea.addEventListener('input', (e) => {
-                this.content = e.target.value;
-                this.adjustTextareaHeight(textarea);
+            editor.addEventListener('input', (inputEvent) => {
+                this.content = editor.value;
+                this.adjustTextareaHeight(editor);
             });
 
-            this.adjustTextareaHeight(textarea);
-
-            textarea.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    e.preventDefault();
+            editor.addEventListener('keydown', (keydownEvent) => {
+                if (keydownEvent.key === 'Escape') {
+                    keydownEvent.preventDefault();
                     this.isEditMode = false;
                     this.render();
                     this.attachEventListeners();
                 }
             });
+
+            // Claude: setting initial height... TODO - figure out what this actually does.
+            this.adjustTextareaHeight(editor);
         } else {
-            const preview = this.element.querySelector('.note-block-preview');
+            const preview = this.element.querySelector('.note-block__preview');
 
             preview.addEventListener('dblclick', () => {
                 this.isEditMode = true;
