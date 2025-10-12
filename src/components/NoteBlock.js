@@ -64,6 +64,21 @@ export class NoteBlock {
                     this.render();
                     this.attachEventListeners();
                 }
+
+                if (keydownEvent.key === 'Tab') {
+                    keydownEvent.preventDefault();
+
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+
+                    // Claude:
+                    // 1. Insert tab character at cursor position.
+                    // 2. Move cursor after the tab.
+                    // 3. Update content and height.
+                    editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 4;
+                    this.content = editor.value;
+                }
             });
 
             // Claude: setting initial height... TODO - figure out what this actually does.
