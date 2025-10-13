@@ -52,9 +52,9 @@ export class NoteBlock {
         if (this.isEditMode) {
             const editor = this.element.querySelector('.note-block__editor');
 
-            editor.addEventListener('input', (inputEvent) => {
+            editor.addEventListener('input', () => {
                 this.content = editor.value;
-                this.adjustTextareaHeight(editor);
+                this.adjustHeightAndScroll(editor);
             });
 
             editor.addEventListener('keydown', (keydownEvent) => {
@@ -78,11 +78,12 @@ export class NoteBlock {
                     editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
                     editor.selectionStart = editor.selectionEnd = start + 4;
                     this.content = editor.value;
+
+                    this.adjustHeightAndScroll(editor);
                 }
             });
-
-            // Claude: setting initial height... TODO - figure out what this actually does.
-            this.adjustTextareaHeight(editor);
+            
+            this.adjustHeightAndScroll(editor);
         } else {
             const preview = this.element.querySelector('.note-block__preview');
 
@@ -94,8 +95,10 @@ export class NoteBlock {
         }
     }
 
-    adjustTextareaHeight(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
+    adjustHeightAndScroll(editor) {
+        const scrollBefore = window.scrollY;
+        editor.style.height = 'auto';
+        editor.style.height = editor.scrollHeight + 'px';
+        window.scrollTo(0, scrollBefore);
     }
 }
