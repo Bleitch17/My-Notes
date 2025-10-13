@@ -87,6 +87,8 @@ export class NoteBlock {
         } else {
             const preview = this.element.querySelector('.note-block__preview');
 
+            // TODO - Adjust scroll such that going into edit mode keeps a "similar" scroll value
+            // instead of scrolling the window to the top of the page...
             preview.addEventListener('dblclick', () => {
                 this.isEditMode = true;
                 this.render();
