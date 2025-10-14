@@ -1,8 +1,8 @@
-import { NoteBlock } from './components/NoteBlock.js';
+import { AppComponent } from './components/AppComponent.js';
 
 class App {
     constructor() {
-        this.noteblock = new NoteBlock(document.getElementById('app'));
+        this.appComponent = new AppComponent();
     }
 }
 

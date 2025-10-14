@@ -1,23 +1,22 @@
 import { marked } from 'marked';
+import { Component } from './Component.js';
 
-export class NoteBlock {
-    constructor(container) {
-        this.container = container;
-        this.element = null;
+export class NoteBlock extends Component {
+    constructor() {
+        super();
         this.content = '# My Note\n\nStart typing in **markdown**!\n\nPress **Esc** to preview.';
         this.isEditMode = true;
-        
-        this.render();
+        this.element = this.createElement();
         this.attachEventListeners();
     }
 
-    render() {
-        if (this.element) {
-            this.element.remove();
-        }
+    mount(container) {
+        this.unmount();
+        container.appendChild(this.element);
+    }
 
-        this.element = this.createElement();
-        this.container.appendChild(this.element);
+    unmount() {
+        this.element.remove();
     }
 
     createElement() {
