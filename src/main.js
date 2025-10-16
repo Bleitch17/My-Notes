@@ -1,9 +1,9 @@
-import { AppComponent } from './components/AppComponent.js';
+import { App } from './components/App.js';
 
-class App {
+class Main {
     constructor() {
-        this.appComponent = new AppComponent();
+        this.app = new App();
     }
 }
 
-new App();
+new Main();
