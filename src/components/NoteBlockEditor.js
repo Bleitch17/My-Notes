@@ -36,12 +36,19 @@ export class NoteBlockEditor {
     attachEventListeners() {
         this.element.addEventListener('input', () => {
             this.content = this.element.value;
+            
+            // TODO - When I make the textarea larger and enter a key, it automatically snaps back to the minimum area needed.
+            // How do I stop this?
             this.adjustHeightAndScroll();
         });
 
         this.element.addEventListener('keydown', (keydownEvent) => {
             if (keydownEvent.key === 'Escape') {
-                // TODO - Figure out how to bubble up an event to the parent component.
+                const editCompleteEvent = new CustomEvent('editComplete', {
+                    detail: { content: this.content },
+                    bubbles: true
+                });
+                this.element.dispatchEvent(editCompleteEvent);
             }
 
             else if (keydownEvent.key === 'Tab') {

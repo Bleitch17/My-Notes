@@ -3,7 +3,6 @@ import { NoteBlockViewer } from "./NoteBlockViewer";
 
 export class NoteBlock {
     constructor() {
-        this.isEditMode = true;
         this.element = this.createElement();
 
         this.editor = new NoteBlockEditor();
@@ -14,13 +13,7 @@ export class NoteBlock {
 
     mount(container) {
         container.appendChild(this.element);
-
-        if (this.isEditMode) {
-            this.editor.mount(this.element);
-        }
-        else {
-            this.viewer.mount(this.element);
-        }
+        this.editor.mount(this.element);
     }
 
     createElement() {
@@ -31,6 +24,15 @@ export class NoteBlock {
     }
 
     attachEventListeners() {
-        // TODO - listeners for events from child components here...?
+        this.element.addEventListener('editComplete', (editCompleteEvent) => {
+            this.switchToViewMode(editCompleteEvent.detail.content);
+        })
+    }
+
+    switchToViewMode(content) {
+        this.editor.unmount();
+        
+        this.viewer.updateContent(content);
+        this.viewer.mount(this.element);
     }
 }

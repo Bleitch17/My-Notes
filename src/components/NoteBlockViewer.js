@@ -29,4 +29,9 @@ export class NoteBlockViewer {
             // TODO - Send event to parent component with content?
         })
     }
+
+    updateContent(newContent) {
+        this.content = newContent;
+        this.element.innerHTML = marked.parse(this.content);
+    }
 }
