@@ -10,6 +10,13 @@ export class NoteBlockEditor {
         container.appendChild(this.element);
 
         this.adjustHeightAndScroll();
+
+        // Delay execution until after the current call stack completes, allowing the browser to fully render
+        // before the cursor is manipulated.
+        setTimeout(() => {
+            this.element.focus();
+            this.element.setSelectionRange(this.content.length, this.content.length);
+        }, 0);
     }
 
     unmount() {
@@ -22,13 +29,6 @@ export class NoteBlockEditor {
 
         textarea.value = this.content;
         textarea.placeholder = 'Write your note in Markdown...';
-
-        // Delay execution until after the current call stack completes, allowing the browser to fully render
-        // before the cursor is manipulated.
-        setTimeout(() => {
-            textarea.focus();
-            textarea.setSelectionRange(this.content.length, this.content.length);
-        }, 0);
 
         return textarea;
     }
