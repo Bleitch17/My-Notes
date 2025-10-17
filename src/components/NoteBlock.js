@@ -26,7 +26,11 @@ export class NoteBlock {
     attachEventListeners() {
         this.element.addEventListener('editComplete', (editCompleteEvent) => {
             this.switchToViewMode(editCompleteEvent.detail.content);
-        })
+        });
+
+        this.element.addEventListener('viewRequest', (viewRequestEvent) => {
+            this.switchToEditMode(viewRequestEvent.detail.content);
+        });
     }
 
     switchToViewMode(content) {
@@ -34,5 +38,12 @@ export class NoteBlock {
         
         this.viewer.updateContent(content);
         this.viewer.mount(this.element);
+    }
+
+    switchToEditMode(content) {
+        this.viewer.unmount();
+
+        this.editor.updateContent(content);
+        this.editor.mount(this.element);
     }
 }

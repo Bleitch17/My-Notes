@@ -23,7 +23,7 @@ export class NoteBlockEditor {
         textarea.value = this.content;
         textarea.placeholder = 'Write your note in Markdown...';
 
-        // Claude: Delay execution until after the current call stack completes, allowing the browser to fully render
+        // Delay execution until after the current call stack completes, allowing the browser to fully render
         // before the cursor is manipulated.
         setTimeout(() => {
             textarea.focus();
@@ -76,5 +76,10 @@ export class NoteBlockEditor {
         
         // TODO - Once Canvas is 2D, need to have the X coordinate here as well...?
         window.scrollTo(0, scrollBefore);
+    }
+
+    updateContent(content) {
+        this.content = content;
+        this.element.value = content;
     }
 }

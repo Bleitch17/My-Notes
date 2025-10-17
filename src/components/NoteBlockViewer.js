@@ -26,7 +26,11 @@ export class NoteBlockViewer {
 
     attachEventListeners() {
         this.element.addEventListener('dblclick', () => {
-            // TODO - Send event to parent component with content?
+            const viewRequestEvent = new CustomEvent('viewRequest', {
+                detail: { content: this.content },
+                bubbles: true
+            });
+            this.element.dispatchEvent(viewRequestEvent);
         })
     }
 
