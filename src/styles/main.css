@@ -19,35 +19,36 @@ body {
 .note-block {
     position: absolute;
     background: white;
-    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 12px;
-    padding-top: 40px;
-    min-width: 300px;
-    max-width: 600px;
+    min-width: 25px;
+    min-height: 25px;
 }
 
-.note-block.dragging {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    cursor: grabbing;
+.note-block-editor {
+    width: 100%;
+    height: 100%;
+    resize: none;
 }
 
-.note-block-drag-handle {
+/* 
+TODO - Put these resize handle styles in a separate file, then import that file into this main.css file.
+*/
+.resize-handle {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 32px;
-    background: #f0f0f0;
-    border-bottom: 1px solid #e0e0e0;
-    border-radius: 8px 8px 0 0;
-    cursor: grab;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
+    background: transparent;
+    transition: background 0.1s ease;
+    z-index: 10;
 }
 
-.note-block-drag-handle:active {
-    cursor: grabbing;
+.resize-handle:hover {
+    background: #4a90e2;
 }
+
+.resize-handle.e, .resize-handle.w {
+    width: 4px;
+    height: 100%;
+    top: 0;
+    cursor: ew-resize;
+}
+
+.resize-handle.e { right: -2px; }

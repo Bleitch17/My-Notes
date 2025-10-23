@@ -1,7 +1,9 @@
 export class NoteBlockEditor {
     constructor() {
         this.content = '# My Note\n\nStart typing in **markdown**!\n\nPress **Esc** to preview.';
+        
         this.element = this.createElement();
+        
         this.attachEventListeners();
     }
 
@@ -10,13 +12,6 @@ export class NoteBlockEditor {
         container.appendChild(this.element);
 
         this.adjustHeightAndScroll();
-
-        // Delay execution until after the current call stack completes, allowing the browser to fully render
-        // before the cursor is manipulated.
-        setTimeout(() => {
-            this.element.focus();
-            this.element.setSelectionRange(this.content.length, this.content.length);
-        }, 0);
     }
 
     unmount() {
@@ -36,9 +31,6 @@ export class NoteBlockEditor {
     attachEventListeners() {
         this.element.addEventListener('input', () => {
             this.content = this.element.value;
-            
-            // TODO - When I make the textarea larger and enter a key, it automatically snaps back to the minimum area needed.
-            // How do I stop this?
             this.adjustHeightAndScroll();
         });
 
@@ -63,9 +55,9 @@ export class NoteBlockEditor {
                 this.element.value = this.element.value.substring(0, start) + '    ' + this.element.value.substring(end);
                 this.element.selectionStart = this.element.selectionEnd + 4;
                 this.content = this.element.value;
-
-                this.adjustHeightAndScroll();
             }
+
+            this.adjustHeightAndScroll();
         });
     }
 
@@ -78,8 +70,8 @@ export class NoteBlockEditor {
         window.scrollTo(0, scrollBefore);
     }
 
-    updateContent(content) {
-        this.content = content;
-        this.element.value = content;
+    updateContent(newContent) {
+        this.content = newContent;
+        this.element.value = newContent;
     }
 }
