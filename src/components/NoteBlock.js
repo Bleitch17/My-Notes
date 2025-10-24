@@ -27,6 +27,7 @@ export class NoteBlock {
         }
 
         this.updatePosition();
+        console.log(this.editor.getSize());
     }
 
     createElement() {
@@ -47,14 +48,26 @@ export class NoteBlock {
 
         this.element.addEventListener('resize', (resizeEvent) => {
             console.log(`dx=${resizeEvent.detail.dx}, dy=${resizeEvent.detail.dy}`);
-            this.element.style.width = Math.max(25, this.element.style.width + resizeEvent.detail.dx);
-            this.element.style.height = Math.max(25, this.element.style.height + resizeEvent.detail.dx);
+
+            const currentWidth = parseInt(this.element.style.width);
+            const currentHeight = parseInt(this.element.style.height);
+
+            console.log(`width=${this.element.style.width}, height=${this.element.style.height}`);
+            console.log(`currentWidth=${currentWidth}, currentHeight=${currentHeight}`);
+
+            this.element.style.width = Math.max(25, currentWidth + resizeEvent.detail.dx) + 'px';
+            this.element.style.height = Math.max(25, currentHeight + resizeEvent.detail.dy) + 'px';
         });
     }
 
     updatePosition() {
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
+    }
+
+    updateSize(width, height) {
+        this.element.style.width = width + 'px';
+        this.element.style.height = height + 'px';
     }
 
     switchToViewMode(content) {

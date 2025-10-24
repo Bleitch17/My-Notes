@@ -20,8 +20,6 @@ body {
     position: absolute;
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    min-width: 25px;
-    min-height: 25px;
 }
 
 .note-block-editor {

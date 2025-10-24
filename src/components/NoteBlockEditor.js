@@ -74,4 +74,11 @@ export class NoteBlockEditor {
         this.content = newContent;
         this.element.value = newContent;
     }
+
+    getSize() {
+        return {
+            width: parseInt(this.element.style.width),
+            height: parseInt(this.element.style.height)
+        }
+    }
 }
