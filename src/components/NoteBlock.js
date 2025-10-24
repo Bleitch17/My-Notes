@@ -45,7 +45,11 @@ export class NoteBlock {
             this.switchToEditMode(viewRequestEvent.detail.content);
         });
 
-        // TODO - attach event listeners for the custom resize event.
+        this.element.addEventListener('resize', (resizeEvent) => {
+            console.log(`dx=${resizeEvent.detail.dx}, dy=${resizeEvent.detail.dy}`);
+            this.element.style.width = Math.max(25, this.element.style.width + resizeEvent.detail.dx);
+            this.element.style.height = Math.max(25, this.element.style.height + resizeEvent.detail.dx);
+        });
     }
 
     updatePosition() {

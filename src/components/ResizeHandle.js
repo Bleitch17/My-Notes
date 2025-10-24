@@ -3,8 +3,10 @@ export class ResizeHandle {
         // TODO - Validate direction is one of "n", "ne", "e", "se", "s", "sw", "w", "nw"
         this.direction = direction;
 
-        this.resizeStartX = 0;
-        this.resizeStartY = 0;
+        this.resizeLastX = 0;
+        this.resizeLastY = 0;
+        this.boundMousemoveListener = undefined;
+        this.boundMouseupListener = undefined;
 
         this.element = this.createElement();
         
@@ -28,30 +30,46 @@ export class ResizeHandle {
     }
 
     attachEventListeners() {
-        this.element.addEventListener('mousedown', this.initResize);
+        this.element.addEventListener('mousedown', this.initResize.bind(this));
     }
 
-    initResize = (mousedownEvent) => {
+    initResize(mousedownEvent) {
         mousedownEvent.preventDefault();
         mousedownEvent.stopPropagation();
 
-        this.resizeStartX = mousedownEvent.clientX;
-        this.resizeStartY = mousedownEvent.clientY;
+        this.resizeLastX = mousedownEvent.clientX;
+        this.resizeLastY = mousedownEvent.clientY;
 
-        document.addEventListener('mousemove', this.doResize);
-        document.addEventListener('mouseup', this.stopResize);
+        this.boundMousemoveListener = this.doResize.bind(this);
+        this.boundMouseupListener = this.stopResize.bind(this);
+
+        document.addEventListener('mousemove', this.boundMousemoveListener);
+        document.addEventListener('mouseup', this.boundMouseupListener);
     }
 
-    doResize = (mousemoveEvent) => {
-        const dx = mousemoveEvent.clientX - this.resizeStartX;
-        const dy = mousemoveEvent.clientY - this.resizeStartY;
+    doResize(mousemoveEvent) {
+        const dx = mousemoveEvent.clientX - this.resizeLastX;
+        const dy = mousemoveEvent.clientY - this.resizeLastY;
 
-        // TODO - Send to container.
-        console.log(`dx=${dx}, dy=${dy}`);
+        this.resizeLastX = mousemoveEvent.clientX;
+        this.resizeLastY = mousemoveEvent.clientY;
+
+        const resizeEvent = new CustomEvent('resize', {
+            detail: {
+                dx: dx,
+                dy: dy
+            },
+            bubbles: true
+        });
+
+        this.element.dispatchEvent(resizeEvent);
     }
 
-    stopResize = () => {
-        document.removeEventListener('mousemove', this.doResize);
-        document.removeEventListener('mouseup', this.stopResize);
+    stopResize() {
+        document.removeEventListener('mousemove', this.boundMousemoveListener);
+        document.removeEventListener('mouseup', this.boundMouseupListener);
+
+        this.boundMousemoveListener = undefined;
+        this.boundMouseupListener = undefined;
     }
 }
