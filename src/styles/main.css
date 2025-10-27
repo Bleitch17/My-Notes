@@ -38,12 +38,17 @@ body {
     /* The NoteBlockEditor shouldn't display scrollbars. */
     overflow: hidden;
 
+    /* The bottom of the textarea was right up against the content, so added some extra spacing. */
     padding-bottom: 3px;
 }
 
 .note-block-viewer {
     /* The NoteBlockViewer should expand horizontally to fill the width of its container. */
     width: 100%;
+
+    /* Mimicking the textarea word wrapping / breaking behavior. */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 /* 
