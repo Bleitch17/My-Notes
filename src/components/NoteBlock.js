@@ -4,6 +4,8 @@ import { ResizeHandle } from "./ResizeHandle";
 
 export class NoteBlock {
     constructor() {
+        this.minWidthPx = 25;
+        this.initialWidthPx = 200;
         this.element = this.createElement();
 
         this.editor = new NoteBlockEditor();
@@ -33,6 +35,8 @@ export class NoteBlock {
     createElement() {
         const div = document.createElement('div');
         div.className = 'note-block';
+        div.style.minWidth = this.minWidthPx + 'px';
+        div.style.width = this.initialWidthPx + 'px';
 
         return div;
     }

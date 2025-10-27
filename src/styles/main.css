@@ -20,11 +20,19 @@ body {
     position: absolute;
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    /* The NoteBlock should expand vertically to accomodate the content it contains. */
+    height: auto;
+
+    /* The NoteBlock should not display scrollbars when the content inside it expands. */
+    /* overflow: visible; */
 }
 
 .note-block-editor {
+    /* The NoteBlockEditor should expand horizontally to fill the width of its container. */
     width: 100%;
-    height: 100%;
+
+    /* The NoteBlockEditor shouldn't have the default resize handle. */
     resize: none;
 }
 
