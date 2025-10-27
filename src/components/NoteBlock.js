@@ -4,7 +4,7 @@ import { ResizeHandle } from "./ResizeHandle";
 
 export class NoteBlock {
     constructor() {
-        this.minWidthPx = 25;
+        this.minWidthPx = 50;
         this.initialWidthPx = 200;
         this.element = this.createElement();
 
@@ -45,8 +45,8 @@ export class NoteBlock {
             this.switchToViewMode(editCompleteEvent.detail.content);
         });
 
-        this.element.addEventListener('viewRequest', (viewRequestEvent) => {
-            this.switchToEditMode(viewRequestEvent.detail.content);
+        this.element.addEventListener('viewComplete', (viewRequestEvent) => {
+            this.switchToEditMode();
         });
 
         this.element.addEventListener('resize', (resizeEvent) => {
@@ -75,12 +75,8 @@ export class NoteBlock {
         this.viewer.mount(this.element);
     }
 
-    switchToEditMode(content) {
+    switchToEditMode() {
         this.viewer.unmount();
-
-        this.editor.updateContent(content);
         this.editor.mount(this.element);
-
-        console.log(`End of switchToEditMode. Editor height=${this.editor.element.style.height}`);
     }
 }

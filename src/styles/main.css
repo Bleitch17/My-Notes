@@ -24,7 +24,7 @@ body {
     /* The NoteBlock should expand vertically to accomodate the content it contains. */
     height: auto;
 
-    /* The NoteBlock should not display scrollbars when the content inside it expands. */
+    /* The NoteBlock shouldn't display scrollbars when the content inside it expands. */
     overflow: visible;
 }
 
@@ -35,7 +35,10 @@ body {
     /* The NoteBlockEditor shouldn't have the default resize handle. */
     resize: none;
 
+    /* The NoteBlockEditor shouldn't display scrollbars. */
     overflow: hidden;
+
+    padding-bottom: 3px;
 }
 
 .note-block-viewer {

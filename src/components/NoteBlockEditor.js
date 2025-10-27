@@ -11,6 +11,9 @@ export class NoteBlockEditor {
         this.unmount();
         container.appendChild(this.element);
 
+        // Force a reflow so the scrollHeight will have the correct value and the height will be updated properly.
+        void this.element.offsetHeight;
+
         this.adjustHeightAndScroll();
     }
 
@@ -68,19 +71,5 @@ export class NoteBlockEditor {
         
         // TODO - Once Canvas is 2D, need to have the X coordinate here as well...?
         window.scrollTo(0, scrollBefore);
-    }
-
-    updateContent(newContent) {
-        this.content = newContent;
-        this.element.value = newContent;
-
-        this.adjustHeightAndScroll();
-    }
-
-    getSize() {
-        return {
-            width: parseInt(this.element.style.width),
-            height: parseInt(this.element.style.height)
-        }
     }
 }
