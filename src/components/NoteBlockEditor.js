@@ -73,6 +73,8 @@ export class NoteBlockEditor {
     updateContent(newContent) {
         this.content = newContent;
         this.element.value = newContent;
+
+        this.adjustHeightAndScroll();
     }
 
     getSize() {

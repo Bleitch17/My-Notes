@@ -38,4 +38,12 @@ export class NoteBlockViewer {
         this.content = newContent;
         this.element.innerHTML = marked.parse(this.content);
     }
+
+    adjustHeightAndScroll() {
+        const scrollBefore = window.scrollY;
+        this.element.style.height = 'auto';
+        this.element.style.height = this.element.scrollHeight + 'px';
+
+        window.scrollTo(0, scrollBefore);
+    }
 }

@@ -29,7 +29,6 @@ export class NoteBlock {
         }
 
         this.updatePosition();
-        console.log(this.editor.getSize());
     }
 
     createElement() {
@@ -51,16 +50,11 @@ export class NoteBlock {
         });
 
         this.element.addEventListener('resize', (resizeEvent) => {
-            console.log(`dx=${resizeEvent.detail.dx}, dy=${resizeEvent.detail.dy}`);
-
             const currentWidth = parseInt(this.element.style.width);
-            const currentHeight = parseInt(this.element.style.height);
+            this.element.style.width = Math.max(this.minWidthPx, currentWidth + resizeEvent.detail.dx) + 'px';
 
-            console.log(`width=${this.element.style.width}, height=${this.element.style.height}`);
-            console.log(`currentWidth=${currentWidth}, currentHeight=${currentHeight}`);
-
-            this.element.style.width = Math.max(25, currentWidth + resizeEvent.detail.dx) + 'px';
-            this.element.style.height = Math.max(25, currentHeight + resizeEvent.detail.dy) + 'px';
+            // The editor needs to know to update its height, since its width will have changed.
+            this.editor.adjustHeightAndScroll();
         });
     }
 
@@ -86,5 +80,7 @@ export class NoteBlock {
 
         this.editor.updateContent(content);
         this.editor.mount(this.element);
+
+        console.log(`End of switchToEditMode. Editor height=${this.editor.element.style.height}`);
     }
 }
