@@ -49,6 +49,8 @@ body {
     /* Mimicking the textarea word wrapping / breaking behavior. */
     overflow-wrap: break-word;
     word-wrap: break-word;
+
+    /* TODO: Need to fix text wrapping in code blocks. */
 }
 
 /* 
@@ -73,3 +75,4 @@ TODO - Put these resize handle styles in a separate file, then import that file 
 }
 
 .resize-handle.e { right: -2px; }
+.resize-handle.w { left: -2px; }

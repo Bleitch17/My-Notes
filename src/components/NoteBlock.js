@@ -11,10 +11,10 @@ export class NoteBlock {
         this.editor = new NoteBlockEditor();
         this.viewer = new NoteBlockViewer();
 
-        this.resizeHandles = [ new ResizeHandle("e") ];
+        this.resizeHandles = [ new ResizeHandle("e"), new ResizeHandle("w") ];
 
         // TODO - Make this a constructor parameter, so NoteBlocks can be added at arbitrary locations?
-        this.position = { x: 100, y: 100 };
+        this.position = { x: 200, y: 100 };
         this.updatePosition();
 
         this.attachEventListeners();
@@ -45,13 +45,28 @@ export class NoteBlock {
             this.switchToViewMode(editCompleteEvent.detail.content);
         });
 
-        this.element.addEventListener('viewComplete', (viewRequestEvent) => {
+        this.element.addEventListener('viewComplete', () => {
             this.switchToEditMode();
         });
 
         this.element.addEventListener('resize', (resizeEvent) => {
             const currentWidth = parseInt(this.element.style.width);
-            this.element.style.width = Math.max(this.minWidthPx, currentWidth + resizeEvent.detail.dx) + 'px';
+            
+            // Note - resizeEvent.dx, resizeEvent.dy with respect to what the mouse is doing in the container firing
+            // the mousemove event.
+            switch (resizeEvent.detail.direction) {
+                case "e": {
+                    this.element.style.width = Math.max(this.minWidthPx, currentWidth + resizeEvent.detail.dx) + 'px';
+                    break;
+                }
+                case "w": {
+                    // TODO
+                    break;
+                }
+                default: {
+                    console.log(`Resize direction ${resizeEvent.detail.direction} not supported.`)
+                }
+            }
 
             // The editor needs to know to update its height, since its width will have changed.
             this.editor.adjustHeightAndScroll();

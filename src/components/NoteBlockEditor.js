@@ -53,7 +53,7 @@ export class NoteBlockEditor {
                 // Note - the Tab key doesn't generate an input event.
                 keydownEvent.preventDefault();
 
-                // I'm deciding here that the desired behavior when pressing tab with a text selection is:
+                // Deciding here that the desired behavior when pressing tab with a text selection is:
                 // 1. Remove all selected text. Effectively, only keep the text before and after the selection.
                 // 2. Insert 4 (or however many) spaces at the start of the text selection.
                 // 3. Move the cursor to the end of the four spaces.

@@ -1,6 +1,7 @@
 export class ResizeHandle {
     constructor(direction) {
         // TODO - Validate direction is one of "n", "ne", "e", "se", "s", "sw", "w", "nw"
+        // TODO - Switch to "orientation" instead? Use top / bottom, left / right, topleft, topright, bottomleft, bottomright?
         this.direction = direction;
 
         this.resizeLastX = 0;
@@ -59,7 +60,8 @@ export class ResizeHandle {
         const resizeEvent = new CustomEvent('resize', {
             detail: {
                 dx: dx,
-                dy: dy
+                dy: dy,
+                direction: this.direction
             },
             bubbles: true
         });
