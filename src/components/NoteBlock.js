@@ -5,7 +5,7 @@ import { ResizeHandle } from "./ResizeHandle";
 export class NoteBlock {
     constructor() {
         this.minWidthPx = 50;
-        this.initialWidthPx = 200;
+        this.initialWidthPx = 400;
         this.element = this.createElement();
 
         this.editor = new NoteBlockEditor();

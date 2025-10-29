@@ -43,6 +43,8 @@ export class ResizeHandle {
         this.boundMousemoveListener = this.doResize.bind(this);
         this.boundMouseupListener = this.stopResize.bind(this);
 
+        // TODO - replace with the container element of the NoteBlock, so that resizes don't happen when the mouse is dragged
+        // over other elements off the canvas like the tool bar, navigation list, etc.
         document.addEventListener('mousemove', this.boundMousemoveListener);
         document.addEventListener('mouseup', this.boundMouseupListener);
     }
