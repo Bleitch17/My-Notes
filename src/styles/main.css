@@ -67,12 +67,12 @@ TODO - Put these resize handle styles in a separate file, then import that file 
     background: #4a90e2;
 }
 
-.resize-handle.e, .resize-handle.w {
+.resize-handle.right, .resize-handle.left {
     width: 4px;
     height: 100%;
     top: 0;
     cursor: ew-resize;
 }
 
-.resize-handle.e { right: -2px; }
-.resize-handle.w { left: -2px; }
+.resize-handle.right { right: -2px; }
+.resize-handle.left { left: -2px; }

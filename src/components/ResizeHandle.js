@@ -1,11 +1,17 @@
 export class ResizeHandle {
-    constructor(direction) {
-        // TODO - Validate direction is one of "n", "ne", "e", "se", "s", "sw", "w", "nw"
-        // TODO - Switch to "orientation" instead? Use top / bottom, left / right, topleft, topright, bottomleft, bottomright?
-        this.direction = direction;
+    constructor(placement) {
+        // TODO - validate that placement is one of the following:
+        // left, right, up, down
+        // topleft, topright, bottomleft, bottomright.
+        this.placement = placement;
 
         this.resizeLastX = 0;
         this.resizeLastY = 0;
+
+        // Tells the resize handle to stop moving past a certain point.
+        this.xLowerBound = -1;
+        this.xUpperBound = -1;
+
         this.boundMousemoveListener = undefined;
         this.boundMouseupListener = undefined;
 
@@ -25,7 +31,7 @@ export class ResizeHandle {
 
     createElement() {
         const handle = document.createElement('div');
-        handle.className = `resize-handle ${this.direction}`;
+        handle.className = `resize-handle ${this.placement}`;
 
         return handle;
     }
@@ -38,6 +44,7 @@ export class ResizeHandle {
         mousedownEvent.preventDefault();
         mousedownEvent.stopPropagation();
 
+        // TODO - Set based on placement?
         this.resizeLastX = mousedownEvent.clientX;
         this.resizeLastY = mousedownEvent.clientY;
 
@@ -50,7 +57,13 @@ export class ResizeHandle {
         document.addEventListener('mouseup', this.boundMouseupListener);
     }
 
-    doResize(mousemoveEvent) {
+    doResize(mousemoveEvent) {        
+        if ( mousemoveEvent.clientX < this.xLowerBound )
+        {
+            return;
+        }
+
+        // TODO - set based on placement?
         const dx = mousemoveEvent.clientX - this.resizeLastX;
         const dy = mousemoveEvent.clientY - this.resizeLastY;
 
@@ -61,7 +74,7 @@ export class ResizeHandle {
             detail: {
                 dx: dx,
                 dy: dy,
-                direction: this.direction
+                handlePlacement: this.placement
             },
             bubbles: true
         });
@@ -75,5 +88,9 @@ export class ResizeHandle {
 
         this.boundMousemoveListener = undefined;
         this.boundMouseupListener = undefined;
+    }
+
+    setLowerBound() {
+        this.xLowerBound = this.resizeLastX;
     }
 }
