@@ -1,19 +1,14 @@
 export class ResizeHandle {
     constructor(placement) {
         // TODO - validate that placement is one of the following:
-        // left, right, up, down
-        // topleft, topright, bottomleft, bottomright.
+        // left, right, up, down, topleft, topright, bottomleft, bottomright.
         this.placement = placement;
 
         this.resizeLastX = 0;
         this.resizeLastY = 0;
 
-        // Tells the resize handle to stop moving past a certain point.
-        this.xLowerBound = -1;
-        this.xUpperBound = -1;
-
-        this.boundMousemoveListener = undefined;
-        this.boundMouseupListener = undefined;
+        this.mousemoveListener = this.doResize.bind(this);
+        this.mouseupListener = this.stopResize.bind(this);
 
         this.element = this.createElement();
         
@@ -44,26 +39,30 @@ export class ResizeHandle {
         mousedownEvent.preventDefault();
         mousedownEvent.stopPropagation();
 
-        // TODO - Set based on placement?
+        // TODO - Set based on placement, e.g.: Not concerned about y coord when resize handles are moving left <-> right, etc.
         this.resizeLastX = mousedownEvent.clientX;
         this.resizeLastY = mousedownEvent.clientY;
 
-        this.boundMousemoveListener = this.doResize.bind(this);
-        this.boundMouseupListener = this.stopResize.bind(this);
-
-        // TODO - replace with the container element of the NoteBlock, so that resizes don't happen when the mouse is dragged
-        // over other elements off the canvas like the tool bar, navigation list, etc.
-        document.addEventListener('mousemove', this.boundMousemoveListener);
-        document.addEventListener('mouseup', this.boundMouseupListener);
+        document.addEventListener('mousemove', this.mousemoveListener);
+        document.addEventListener('mouseup', this.mouseupListener);
     }
 
     doResize(mousemoveEvent) {        
-        if ( mousemoveEvent.clientX < this.xLowerBound )
-        {
+        // If the mouse is too far from the ResizeHandle, don't want to move it (that looks weird).
+        const elementRect = this.element.getBoundingClientRect();
+        const mouseX = mousemoveEvent.clientX;
+        const mouseY = mousemoveEvent.clientY;
+
+        // TODO - Relax assumption that ResizeHandle is horizontal.
+        if (mouseY < elementRect.top || mouseY > elementRect.bottom) {
             return;
         }
 
-        // TODO - set based on placement?
+        if (mouseX < elementRect.left - 25 || mouseX > elementRect.right + 25) {
+            return;
+        }
+
+        // TODO - Set based on placement, e.g.: Not concerned about y coord when resize handles are moving left <-> right, etc.
         const dx = mousemoveEvent.clientX - this.resizeLastX;
         const dy = mousemoveEvent.clientY - this.resizeLastY;
 
@@ -83,14 +82,7 @@ export class ResizeHandle {
     }
 
     stopResize() {
-        document.removeEventListener('mousemove', this.boundMousemoveListener);
-        document.removeEventListener('mouseup', this.boundMouseupListener);
-
-        this.boundMousemoveListener = undefined;
-        this.boundMouseupListener = undefined;
-    }
-
-    setLowerBound() {
-        this.xLowerBound = this.resizeLastX;
+        document.removeEventListener('mousemove', this.mousemoveListener);
+        document.removeEventListener('mouseup', this.mouseupListener);
     }
 }

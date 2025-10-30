@@ -56,12 +56,6 @@ export class NoteBlock {
             // the mousemove event.
             switch (resizeEvent.detail.handlePlacement) {
                 case "right": {
-                    const newWidth = currentWidth + resizeEvent.detail.dx
-
-                    if (newWidth <= this.minWidthPx) {
-                        this.resizeHandles[0].setLowerBound();
-                    }
-
                     this.element.style.width = Math.max(this.minWidthPx, currentWidth + resizeEvent.detail.dx) + 'px';
                     break;
                 }
