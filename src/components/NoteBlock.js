@@ -15,7 +15,6 @@ export class NoteBlock {
 
         // TODO - Make this a constructor parameter, so NoteBlocks can be added at arbitrary locations?
         this.position = { x: 200, y: 100 };
-        this.updatePosition();
 
         this.attachEventListeners();
     }
@@ -52,19 +51,30 @@ export class NoteBlock {
         this.element.addEventListener('resize', (resizeEvent) => {
             const currentWidth = parseInt(this.element.style.width);
 
-            // Note - resizeEvent.dx, resizeEvent.dy with respect to what the mouse is doing in the container firing
-            // the mousemove event.
+            // Note - resizeEvent.dx with respect to what the mouse is doing in the container firing the mousemove event.
             switch (resizeEvent.detail.handlePlacement) {
                 case "right": {
                     this.element.style.width = Math.max(this.minWidthPx, currentWidth + resizeEvent.detail.dx) + 'px';
                     break;
                 }
                 case "left": {
-                    // TODO
+                    // Resizing with the left handle is a little more complicated than resizing with the right handle.
+                    // Need to update the NoteBlock's position, and also decrease the width by the same amount.
+                    // However, if the NoteBlock would become smaller than the minimum width, must not do the resize.
+                    const newX = this.position.x + resizeEvent.detail.dx;
+                    const newWidth = currentWidth - resizeEvent.detail.dx;
+
+                    if (newWidth < this.minWidthPx || newX < 0) {
+                        return;
+                    }
+
+                    this.position.x = newX;
+                    this.element.style.width = newWidth + 'px';
+                    this.updatePosition();
                     break;
                 }
                 default: {
-                    console.log(`Resize direction ${resizeEvent.detail.direction} not supported.`)
+                    console.log(`ResizeHandle placement ${resizeEvent.detail.handlePlacement} not supported.`)
                 }
             }
 
@@ -76,11 +86,6 @@ export class NoteBlock {
     updatePosition() {
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
-    }
-
-    updateSize(width, height) {
-        this.element.style.width = width + 'px';
-        this.element.style.height = height + 'px';
     }
 
     switchToViewMode(content) {

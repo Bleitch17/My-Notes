@@ -1,11 +1,15 @@
 export class ResizeHandle {
     constructor(placement) {
-        // TODO - validate that placement is one of the following:
-        // left, right, up, down, topleft, topright, bottomleft, bottomright.
+        // TODO - Extend this component to more directions when needed.
         this.placement = placement;
 
         this.resizeLastX = 0;
-        this.resizeLastY = 0;
+
+        // Controls how far away the mouse needs to be before the resize action stops.
+        // This is helpful for preventing resizes from continuing if the component containing
+        // the ResizeHandle has reached a maximum or minimum width, and the mouse is still
+        // held down and / or moving.
+        this.resizeHandleActionWidthPx = 25;
 
         this.mousemoveListener = this.doResize.bind(this);
         this.mouseupListener = this.stopResize.bind(this);
@@ -39,9 +43,7 @@ export class ResizeHandle {
         mousedownEvent.preventDefault();
         mousedownEvent.stopPropagation();
 
-        // TODO - Set based on placement, e.g.: Not concerned about y coord when resize handles are moving left <-> right, etc.
         this.resizeLastX = mousedownEvent.clientX;
-        this.resizeLastY = mousedownEvent.clientY;
 
         document.addEventListener('mousemove', this.mousemoveListener);
         document.addEventListener('mouseup', this.mouseupListener);
@@ -53,26 +55,21 @@ export class ResizeHandle {
         const mouseX = mousemoveEvent.clientX;
         const mouseY = mousemoveEvent.clientY;
 
-        // TODO - Relax assumption that ResizeHandle is horizontal.
         if (mouseY < elementRect.top || mouseY > elementRect.bottom) {
             return;
         }
 
-        if (mouseX < elementRect.left - 25 || mouseX > elementRect.right + 25) {
+        if (mouseX < elementRect.left - this.resizeHandleActionWidthPx || mouseX > elementRect.right + this.resizeHandleActionWidthPx) {
             return;
         }
 
-        // TODO - Set based on placement, e.g.: Not concerned about y coord when resize handles are moving left <-> right, etc.
         const dx = mousemoveEvent.clientX - this.resizeLastX;
-        const dy = mousemoveEvent.clientY - this.resizeLastY;
 
         this.resizeLastX = mousemoveEvent.clientX;
-        this.resizeLastY = mousemoveEvent.clientY;
 
         const resizeEvent = new CustomEvent('resize', {
             detail: {
                 dx: dx,
-                dy: dy,
                 handlePlacement: this.placement
             },
             bubbles: true
