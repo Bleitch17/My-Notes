@@ -63,9 +63,8 @@ export class ResizeHandle {
             return;
         }
 
-        const dx = mousemoveEvent.clientX - this.resizeLastX;
-
-        this.resizeLastX = mousemoveEvent.clientX;
+        const dx = mouseX - this.resizeLastX;
+        this.resizeLastX = mouseX;
 
         const resizeEvent = new CustomEvent('resize', {
             detail: {

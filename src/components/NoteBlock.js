@@ -6,6 +6,7 @@ export class NoteBlock {
     constructor() {
         this.minWidthPx = 50;
         this.initialWidthPx = 400;
+
         this.element = this.createElement();
 
         this.editor = new NoteBlockEditor();
@@ -13,8 +14,17 @@ export class NoteBlock {
 
         this.resizeHandles = [ new ResizeHandle("right"), new ResizeHandle("left") ];
 
-        // TODO - Make this a constructor parameter, so NoteBlocks can be added at arbitrary locations?
-        this.position = { x: 200, y: 100 };
+        this.x = 200;
+        this.y = 100;
+
+        this.isDragging = false;
+        this.dragStartTimeoutId = undefined;
+        this.dragStartTimeoutMs = 1000;
+        this.dragLastX = 0;
+        this.dragLastY = 0;
+
+        this.mousemoveListener = this.doDrag.bind(this);
+        this.mouseupListener = this.stopDrag.bind(this);
 
         this.attachEventListeners();
     }
@@ -44,22 +54,19 @@ export class NoteBlock {
             this.switchToViewMode(editCompleteEvent.detail.content);
         });
 
-        this.element.addEventListener('mousedown', () => {
-            // Some observations:
-            // 1. mousedown fires when clicking on the textarea to get keyboard focus.
-            // 2. mousedown fires when continuing to click on the textarea, even after the textarea gets keyboard focus.
-            // 3. mousedown fires twice when double-clicking on the viewer to change back to edit mode.
-            // 4. mousedown fires when clicking on the viewer normally.
-            // 5. mousedown does not fire when either of the two ResizeHandles are clicked, as expected.
-            console.log(`mousedown on NoteBlock`);
+        this.element.addEventListener('mousedown', (mousedownEvent) => {
+            // Note - can't use preventDefault() here because the editor wouldn't change the text selection.
+            mousedownEvent.stopPropagation();
 
-            // Plan for implementing the drag:
-            // 1. When a mousedown event is received, set a timeout to add a mousemove event handler.
-            //    When the mousemove event handler is added, the 
-            // 2. When a mousedown event is received, immediately add a mouseup event handler to the document.
-            //    This mouseup handler will remove any pending timeouts, any added mousemove event handlers, as well as
-            //    the mouseup handler itself from the document.
-            // 3. 
+            this.dragLastX = mousedownEvent.clientX;
+            this.dragLastY = mousedownEvent.clientY;
+
+            document.addEventListener('mousemove', this.mousemoveListener);
+            document.addEventListener('mouseup', this.mouseupListener);
+
+            this.dragStartTimeoutId = setTimeout(() => {
+                this.isDragging = true;
+            }, this.dragStartTimeoutMs);
         });
         
         this.element.addEventListener('viewComplete', () => {
@@ -79,14 +86,14 @@ export class NoteBlock {
                     // Resizing with the left handle is a little more complicated than resizing with the right handle.
                     // Need to update the NoteBlock's position, and also decrease the width by the same amount.
                     // However, if the NoteBlock would become smaller than the minimum width, must not do the resize.
-                    const newX = this.position.x + resizeEvent.detail.dx;
+                    const newX = this.x + resizeEvent.detail.dx;
                     const newWidth = currentWidth - resizeEvent.detail.dx;
 
                     if (newWidth < this.minWidthPx || newX < 0) {
                         return;
                     }
 
-                    this.position.x = newX;
+                    this.x = newX;
                     this.element.style.width = newWidth + 'px';
                     this.updatePosition();
                     break;
@@ -102,8 +109,8 @@ export class NoteBlock {
     }
 
     updatePosition() {
-        this.element.style.left = `${this.position.x}px`;
-        this.element.style.top = `${this.position.y}px`;
+        this.element.style.left = this.x + 'px';
+        this.element.style.top = this.y + 'px';
     }
 
     switchToViewMode(content) {
@@ -116,5 +123,38 @@ export class NoteBlock {
     switchToEditMode() {
         this.viewer.unmount();
         this.editor.mount(this.element);
+    }
+
+    doDrag(mousemoveEvent) {
+        if (!this.isDragging) {
+            document.removeEventListener('mousemove', this.mousemoveListener);
+            document.removeEventListener('mouseup', this.mouseupListener);
+
+            clearTimeout(this.dragStartTimeoutId);
+            return;
+        }
+
+        const mouseX = mousemoveEvent.clientX;
+        const mouseY = mousemoveEvent.clientY;
+
+        // TODO: Find a way to ensure that the NoteBlock can't be dragged out of its container.
+        // Use getClientBoundingRect() together with visible window dimensions?
+        const dx = mouseX - this.dragLastX;
+        const dy = mouseY - this.dragLastY;
+
+        this.dragLastX = mouseX;
+        this.dragLastY = mouseY;
+
+        this.x = this.x + dx;
+        this.y = this.y + dy;
+
+        this.updatePosition();
+    }
+
+    stopDrag() {
+        document.removeEventListener('mousemove', this.mousemoveListener);
+        document.removeEventListener('mouseup', this.mouseupListener);
+
+        this.isDragging = false;
     }
 }
